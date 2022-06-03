@@ -89,12 +89,12 @@ namespace CloudServiceDownloaderAPI.Controllers
         {
             var downloadHelper = new DownloadHelper();
 
-            var isCloudService = downloadHelper.IsCloudService(shareLinkDTO.Link);
+            var isCloudService = DownloadHelper.IsCloudService(shareLinkDTO.Link);
 
             var shareLink = new ShareLink
             {
                 Link = shareLinkDTO.Link,
-                CloudService = downloadHelper.GetCloudService(shareLinkDTO.Link),
+                CloudService = DownloadHelper.GetCloudService(shareLinkDTO.Link),
                 IsDownloaded = false,
                 IsUploaded = false,
             };
