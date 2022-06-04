@@ -10,8 +10,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace CloudServiceDownloaderAPI.Migrations
 {
     [DbContext(typeof(APIContext))]
-    [Migration("20220601155922_Initial")]
-    partial class Initial
+    [Migration("20220604110941_Init")]
+    partial class Init
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -92,10 +92,6 @@ namespace CloudServiceDownloaderAPI.Migrations
 
                     b.HasKey("ShareLinkId")
                         .HasName("pk_share_links");
-
-                    b.HasIndex("Link")
-                        .IsUnique()
-                        .HasDatabaseName("ix_share_links_link");
 
                     b.ToTable("share_links");
                 });

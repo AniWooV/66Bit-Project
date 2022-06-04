@@ -91,10 +91,6 @@ namespace CloudServiceDownloaderAPI.Migrations
                     b.HasKey("ShareLinkId")
                         .HasName("pk_share_links");
 
-                    b.HasIndex("Link")
-                        .IsUnique()
-                        .HasDatabaseName("ix_share_links_link");
-
                     b.ToTable("share_links");
                 });
 

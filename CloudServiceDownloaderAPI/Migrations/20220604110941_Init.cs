@@ -4,7 +4,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 namespace CloudServiceDownloaderAPI.Migrations
 {
-    public partial class Initial : Migration
+    public partial class Init : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -58,12 +58,6 @@ namespace CloudServiceDownloaderAPI.Migrations
                 name: "ix_files_share_link_id",
                 table: "files",
                 column: "share_link_id");
-
-            migrationBuilder.CreateIndex(
-                name: "ix_share_links_link",
-                table: "share_links",
-                column: "link",
-                unique: true);
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
