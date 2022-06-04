@@ -86,6 +86,10 @@ namespace CloudServiceDownloaderAPI.Services.Download
                     break;
 
                 case CloudService.Google:
+                    var googleDownloader = new GoogleDownloader();
+
+                    file = await Task.Run(() =>
+                        googleDownloader.DownloadFile(shareLink, _folderPath));
                     break;
 
                 case CloudService.Mail:
