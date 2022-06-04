@@ -21,7 +21,26 @@ namespace CloudServiceDownloaderAPI.Services.Download
 
         public static CloudService GetCloudService(string link)
         {
-            return CloudService.Yandex;
+            var data = link.Split('.');
+            try
+            {
+                var answ = data[1];
+                switch (answ){
+                    case "dropbox":
+                        return CloudService.DropBox;
+                    case "google":
+                        return CloudService.Google;
+                    case "yandex":
+                        return CloudService.Yandex;
+                    case "mail":
+                        return CloudService.Mail;
+                    default:
+                        return CloudService.NoService;
+                }
+            }
+            catch {
+                return CloudService.NoService;
+            }
         }
 
         public static bool IsCloudService(string link)
