@@ -9,13 +9,13 @@ using System.Threading.Tasks;
 namespace CloudServiceDownloaderAPI.Services.Download
 {
     public class DropBoxDownloader : IDownloader
-    {
+    {   
         private readonly DropboxClient _dbx;
 
         public DropBoxDownloader()
         {
             _dbx = new DropboxClient(
-                "sl.BI3zx5EB-4O0CoY_xQxFNQn6sz1dziruqrtrZjjcuy5iWU1l3NpgplA2x9NmSbOee5pZrbZMAD9IUEgf6wJ0ZAePUam5oG4Dw3-e-XLTarUXvoxSU1DhyCNPZuremuCKXQ0uCKI7m7Bk");
+                "sl.BJAZ5uTiTte-oJeOEDPU1GcYJP4wKuBkZ5IQ-3pTQL4OSkJYG8jU8mpxOihBZWn-_69ceFt8bWObn3OBzf4h-l41Gu088B6FYCciVih5RvtO2cZGatwG5u4ctWc1IuX5Uww7D4X1l32s");
         }
 
         public File DownloadFile(ShareLink shareLink, string folderPath)
