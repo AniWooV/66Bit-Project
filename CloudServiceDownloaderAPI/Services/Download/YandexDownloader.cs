@@ -21,28 +21,19 @@ namespace CloudServiceDownloaderAPI.Services.Download
 
         public File DownloadFile(ShareLink shareLink, string folderPath)
         {
-            //Создаем модель File, для последующего заполнения данных о файле в БД
-            var file = new File();
-
             using (var wClient = new WebClient())
             {
-                //Проверяем ведет ли ссылка к сервису Яндекс.Диск(пока что заглушка)
-                if (IsLinkLegit(shareLink.Link))
-                {
-                    var fileData = GetFileData(shareLink.Link);
+                var fileData = GetFileData(shareLink.Link);
 
-                    var fileName = GetFileName(fileData);
+                var fileName = GetFileName(fileData);
 
-                    var localFilePath = DownloadHelper.GetLocaFilelPath(fileName);
+                var localFilePath = DownloadHelper.GetLocaFilelPath(fileName);
 
-                    var uri = new Uri(GetDownloadLink(fileData));
+                var uri = new Uri(GetDownloadLink(fileData));
 
-                    wClient.DownloadFileAsync(uri, localFilePath);
+                wClient.DownloadFileAsync(uri, localFilePath);
 
-                    file = new File(fileName, localFilePath, shareLink);
-                }
-
-                return file;
+                return new File(fileName, localFilePath, shareLink);
             }
         }
 
@@ -62,7 +53,7 @@ namespace CloudServiceDownloaderAPI.Services.Download
             return s.Substring(index + 1, s.Length - index - 1);
         }
 
-        public bool IsLinkLegit(string link)
+        public static bool IsLinkLegit(string link)
         {
             return true;
         }

@@ -20,28 +20,21 @@ namespace CloudServiceDownloaderAPI.Services.Download
 
         public File DownloadFile(ShareLink shareLink, string folderPath)
         {
-            var file = new File();
-
             using (var wClient = new WebClient())
             {
-                if (IsLinkLegit(shareLink.Link))
-                {
-                    var fileName = GetFileName(shareLink.Link);
+                var fileName = GetFileName(shareLink.Link);
 
-                    var localFilePath = DownloadHelper.GetLocaFilelPath(fileName);
+                var localFilePath = DownloadHelper.GetLocaFilelPath(fileName);
 
-                    var uri = new Uri(GetDownloadLink(shareLink.Link));
+                var uri = new Uri(GetDownloadLink(shareLink.Link));
 
-                    wClient.DownloadFileAsync(uri, localFilePath);
+                wClient.DownloadFileAsync(uri, localFilePath);
 
-                    file = new File(fileName, localFilePath, shareLink);
-                }
-
-                return file;
+                return new File(fileName, localFilePath, shareLink);
             }
         }
 
-        public bool IsLinkLegit(string link)
+        public static bool IsLinkLegit(string link)
         {
             return true;
         }

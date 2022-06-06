@@ -22,23 +22,33 @@ namespace CloudServiceDownloaderAPI.Services.Download
 
         public static CloudService GetCloudService(string link)
         {
-            var service = link.Split('.')[1];
-
             try
             {
+                var service = link.Split('.')[1];
+
                 return service switch
                 {
                     "dropbox" => CloudService.DropBox,
                     "google" => CloudService.Google,
                     "yandex" => CloudService.Yandex,
                     "mail" => CloudService.Mail,
-                    _ => CloudService.NoService,
+                    _ => CloudService.NoService
                 };
             }
             catch 
             {
                 return CloudService.NoService;
             }
+        }
+
+        public static bool IsLinkLegit(string link)
+        {
+            return GetCloudService(link) switch
+            {
+                CloudService.DropBox => DropBoxDownloader.IsLinkLegit(link),
+                CloudService.Yandex => YandexDownloader.IsLinkLegit(link),
+                _ => false
+            };
         }
 
         public static string GetLocaFilelPath(string fileName)

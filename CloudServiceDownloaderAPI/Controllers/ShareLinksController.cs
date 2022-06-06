@@ -119,6 +119,11 @@ namespace CloudServiceDownloaderAPI.Controllers
         {
             var cloudService = DownloadHelper.GetCloudService(shareLinkDTO.Link);
 
+            if (cloudService == CloudService.NoService || !DownloadHelper.IsLinkLegit(shareLinkDTO.Link))
+            {
+                return BadRequest("Link doesn't lead to any cloud service");
+            }
+
             var shareLink = new ShareLink
             {
                 Link = shareLinkDTO.Link,
@@ -128,12 +133,9 @@ namespace CloudServiceDownloaderAPI.Controllers
 
             _context.ShareLinks.Add(shareLink);
 
-            if (cloudService != CloudService.NoService)
-            {
-                var downloadHelper = new DownloadHelper();
+            var downloadHelper = new DownloadHelper();
 
-                await downloadHelper.DownloadFile(shareLink, _context);
-            }
+            await downloadHelper.DownloadFile(shareLink, _context);
 
             await _context.SaveChangesAsync();
 
