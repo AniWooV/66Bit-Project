@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using CloudServiceDownloaderAPI.Contexts;
+using CloudServiceDownloaderAPI.Enums;
 using CloudServiceDownloaderAPI.Models;
 using CloudServiceDownloaderAPI.Models.DTO_s;
 using CloudServiceDownloaderAPI.Services.Download;
@@ -28,7 +29,21 @@ namespace CloudServiceDownloaderAPI.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<ShareLink>>> GetShareLinks()
         {
-            return await _context.ShareLinks.ToListAsync();
+            var shareLinks = await _context.ShareLinks.ToListAsync();
+
+            var shareLinksToReturn = new List<ShareLink>();
+
+            foreach (var shareLink in shareLinks)
+            {
+                shareLink.Files = _context.Files
+                    .Where(f => f.ShareLinkId == shareLink.ShareLinkId)
+                    .ToList();
+
+
+                shareLinksToReturn.Add(shareLink);
+            }
+
+            return shareLinksToReturn;
         }
 
         // GET: api/ShareLinks/5
@@ -87,22 +102,22 @@ namespace CloudServiceDownloaderAPI.Controllers
         [HttpPost]
         public async Task<ActionResult<ShareLink>> PostShareLink(ShareLinkDTO shareLinkDTO)
         {
-            var downloadHelper = new DownloadHelper();
-
-            var isCloudService = DownloadHelper.IsCloudService(shareLinkDTO.Link);
+            var cloudService = DownloadHelper.GetCloudService(shareLinkDTO.Link);
 
             var shareLink = new ShareLink
             {
                 Link = shareLinkDTO.Link,
-                CloudService = DownloadHelper.GetCloudService(shareLinkDTO.Link),
+                CloudService = cloudService,
                 IsDownloaded = false,
                 IsUploaded = false,
             };
 
             _context.ShareLinks.Add(shareLink);
 
-            if (isCloudService)
+            if (cloudService != CloudService.NoService)
             {
+                var downloadHelper = new DownloadHelper();
+
                 await downloadHelper.DownloadFile(shareLink, _context);
             }
 

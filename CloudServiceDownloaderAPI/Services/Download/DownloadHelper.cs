@@ -4,6 +4,7 @@ using CloudServiceDownloaderAPI.Contexts;
 using CloudServiceDownloaderAPI.Enums;
 using CloudServiceDownloaderAPI.Models;
 using CloudServiceDownloaderAPI.Services.DataBase;
+using Dropbox.Api.Files;
 
 namespace CloudServiceDownloaderAPI.Services.Download
 {
@@ -21,31 +22,23 @@ namespace CloudServiceDownloaderAPI.Services.Download
 
         public static CloudService GetCloudService(string link)
         {
-            var data = link.Split('.');
+            var service = link.Split('.')[1];
+
             try
             {
-                var answ = data[1];
-                switch (answ){
-                    case "dropbox":
-                        return CloudService.DropBox;
-                    case "google":
-                        return CloudService.Google;
-                    case "yandex":
-                        return CloudService.Yandex;
-                    case "mail":
-                        return CloudService.Mail;
-                    default:
-                        return CloudService.NoService;
-                }
+                return service switch
+                {
+                    "dropbox" => CloudService.DropBox,
+                    "google" => CloudService.Google,
+                    "yandex" => CloudService.Yandex,
+                    "mail" => CloudService.Mail,
+                    _ => CloudService.NoService,
+                };
             }
-            catch {
+            catch 
+            {
                 return CloudService.NoService;
             }
-        }
-
-        public static bool IsCloudService(string link)
-        {
-            return true;
         }
 
         public static string GetLocaFilelPath(string fileName)
@@ -85,14 +78,7 @@ namespace CloudServiceDownloaderAPI.Services.Download
                         yandexDownloader.DownloadFile(shareLink, _folderPath));
                     break;
 
-                case CloudService.Google:
-                    var googleDownloader = new GoogleDownloader();
-
-                    file = await Task.Run(() =>
-                        googleDownloader.DownloadFile(shareLink, _folderPath));
-                    break;
-
-                case CloudService.Mail:
+                default:
                     break;
             }
 
