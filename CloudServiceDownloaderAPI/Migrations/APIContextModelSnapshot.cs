@@ -47,10 +47,6 @@ namespace CloudServiceDownloaderAPI.Migrations
                         .HasColumnType("bigint")
                         .HasColumnName("share_link_id");
 
-                    b.Property<DateTime>("UploadTime")
-                        .HasColumnType("timestamp without time zone")
-                        .HasColumnName("upload_time");
-
                     b.HasKey("FileId")
                         .HasName("pk_files");
 
@@ -79,10 +75,6 @@ namespace CloudServiceDownloaderAPI.Migrations
                     b.Property<bool>("IsDownloaded")
                         .HasColumnType("boolean")
                         .HasColumnName("is_downloaded");
-
-                    b.Property<bool>("IsUploaded")
-                        .HasColumnType("boolean")
-                        .HasColumnName("is_uploaded");
 
                     b.Property<string>("Link")
                         .HasColumnType("text")

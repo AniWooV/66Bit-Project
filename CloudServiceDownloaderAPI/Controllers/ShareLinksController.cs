@@ -1,8 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using CloudServiceDownloaderAPI.Contexts;
@@ -10,7 +8,6 @@ using CloudServiceDownloaderAPI.Enums;
 using CloudServiceDownloaderAPI.Models;
 using CloudServiceDownloaderAPI.Models.DTO_s;
 using CloudServiceDownloaderAPI.Services.Download;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 namespace CloudServiceDownloaderAPI.Controllers
 {
@@ -27,20 +24,45 @@ namespace CloudServiceDownloaderAPI.Controllers
 
         // GET: api/ShareLinks
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<ShareLink>>> GetShareLinks()
+        public async Task<ActionResult<IEnumerable<ShareLinkDetailsDTO>>> GetShareLinks()
         {
             var shareLinks = await _context.ShareLinks.ToListAsync();
 
-            var shareLinksToReturn = new List<ShareLink>();
+            var shareLinksToReturn = new List<ShareLinkDetailsDTO>();
 
             foreach (var shareLink in shareLinks)
             {
-                shareLink.Files = _context.Files
+                var shareLinkDetailsDTO = new ShareLinkDetailsDTO
+                {
+                    ShareLinkId = shareLink.ShareLinkId,
+                    Link = shareLink.Link,
+                    CloudService = shareLink.CloudService,
+                    IsDownloaded = shareLink.IsDownloaded
+                };
+
+                var filesDTO = new List<FileDTO>();
+
+                var files = _context.Files
                     .Where(f => f.ShareLinkId == shareLink.ShareLinkId)
                     .ToList();
 
+                foreach (var file in files)
+                {
+                    var fileDTO = new FileDTO
+                    {
+                        FileId = file.FileId,
+                        FileName = file.FileName,
+                        FileType = file.FileType,
+                        DownloadTime = file.DownloadTime,
+                        ShareLinkId = file.ShareLinkId
+                    };
 
-                shareLinksToReturn.Add(shareLink);
+                    filesDTO.Add(fileDTO);
+                }
+
+                shareLinkDetailsDTO.Files = filesDTO;
+
+                shareLinksToReturn.Add(shareLinkDetailsDTO);
             }
 
             return shareLinksToReturn;
@@ -48,7 +70,7 @@ namespace CloudServiceDownloaderAPI.Controllers
 
         // GET: api/ShareLinks/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<ShareLink>> GetShareLink(long id)
+        public async Task<ActionResult<ShareLinkDetailsDTO>> GetShareLink(long id)
         {
             var shareLink = await _context.ShareLinks.FindAsync(id);
 
@@ -57,44 +79,37 @@ namespace CloudServiceDownloaderAPI.Controllers
                 return NotFound();
             }
 
+            var shareLinkDetailsDTO = new ShareLinkDetailsDTO
+            {
+                ShareLinkId = shareLink.ShareLinkId,
+                Link = shareLink.Link,
+                CloudService = shareLink.CloudService,
+                IsDownloaded = shareLink.IsDownloaded
+            };
+
+            var filesDTO = new List<FileDTO>();
+
             var files = _context.Files
                 .Where(f => f.ShareLinkId == shareLink.ShareLinkId)
                 .ToList();
 
-            shareLink.Files = files;
-
-            return shareLink;
-        }
-
-        // PUT: api/ShareLinks/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutShareLink(long id, ShareLink shareLink)
-        {
-            if (id != shareLink.ShareLinkId)
+            foreach (var file in files)
             {
-                return BadRequest();
-            }
-
-            _context.Entry(shareLink).State = EntityState.Modified;
-
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!ShareLinkExists(id))
+                var fileDTO = new FileDTO
                 {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
+                    FileId = file.FileId,
+                    FileName = file.FileName,
+                    FileType = file.FileType,
+                    DownloadTime = file.DownloadTime,
+                    ShareLinkId = file.ShareLinkId
+                };
+
+                filesDTO.Add(fileDTO);
             }
 
-            return NoContent();
+            shareLinkDetailsDTO.Files = filesDTO;
+
+            return shareLinkDetailsDTO;
         }
 
         // POST: api/ShareLinks
@@ -108,8 +123,7 @@ namespace CloudServiceDownloaderAPI.Controllers
             {
                 Link = shareLinkDTO.Link,
                 CloudService = cloudService,
-                IsDownloaded = false,
-                IsUploaded = false,
+                IsDownloaded = false
             };
 
             _context.ShareLinks.Add(shareLink);
@@ -140,11 +154,6 @@ namespace CloudServiceDownloaderAPI.Controllers
             await _context.SaveChangesAsync();
 
             return NoContent();
-        }
-
-        private bool ShareLinkExists(long id)
-        {
-            return _context.ShareLinks.Any(e => e.ShareLinkId == id);
         }
     }
 }

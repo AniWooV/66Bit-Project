@@ -31,14 +31,9 @@ namespace CloudServiceDownloaderAPI
                 options
                     .UseNpgsql(Configuration.GetConnectionString("DefaultConnection"))
                     .UseSnakeCaseNamingConvention()
-                    .UseLoggerFactory(LoggerFactory.Create(builder => builder.AddConsole()))
-                    .EnableSensitiveDataLogging()
             );
 
             services.AddDatabaseDeveloperPageExceptionFilter();
-
-            services.AddControllers().AddJsonOptions(x =>
-                x.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.Preserve);
 
             services.AddSwaggerGen(c =>
             {

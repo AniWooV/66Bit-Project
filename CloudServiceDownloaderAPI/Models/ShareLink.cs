@@ -11,14 +11,7 @@ namespace CloudServiceDownloaderAPI.Models
         public string Link { get; set; }
         public CloudService CloudService { get; set; }
         public bool IsDownloaded { get; set; }
-        public bool IsUploaded { get; set; }
 
         public ICollection<File> Files { get; set; }
-
-        public void UpdateModel(bool isDowloaded, bool isUploaded)
-        {
-            IsDownloaded = isDowloaded;
-            IsUploaded = isUploaded;
-        }
     }
 }

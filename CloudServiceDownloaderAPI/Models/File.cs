@@ -11,7 +11,6 @@ namespace CloudServiceDownloaderAPI.Models
         public string FileName { get; set; }
         public FileType FileType { get; set; }
         public DateTime DownloadTime { get; set; }
-        public DateTime UploadTime { get; set; }
         public string FilePath { get; set; }
 
         public long ShareLinkId { get; set; }
@@ -28,7 +27,6 @@ namespace CloudServiceDownloaderAPI.Models
             FileType = FileType.Document;
             FilePath = filePath;
             DownloadTime = DateTime.Now;
-            UploadTime = DateTime.MinValue;
             ShareLinkId = shareLink.ShareLinkId;
             ShareLink = shareLink;
         }
