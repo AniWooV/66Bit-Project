@@ -115,7 +115,7 @@ namespace CloudServiceDownloaderAPI.Controllers
         // POST: api/ShareLinks
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<ShareLink>> PostShareLink(ShareLinkDTO shareLinkDTO)
+        public async Task<ActionResult<ShareLinkDetailsDTO>> PostShareLink(ShareLinkDTO shareLinkDTO)
         {
             var cloudService = DownloadHelper.GetCloudService(shareLinkDTO.Link);
 
@@ -137,7 +137,15 @@ namespace CloudServiceDownloaderAPI.Controllers
 
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction(nameof(GetShareLink), new { id = shareLink.ShareLinkId }, shareLink);
+            var shareLinkDetailsDTO = new ShareLinkDetailsDTO
+            {
+                ShareLinkId = shareLink.ShareLinkId,
+                Link = shareLink.Link,
+                CloudService = cloudService,
+                IsDownloaded = false
+            };
+
+            return CreatedAtAction(nameof(GetShareLink), new { id = shareLink.ShareLinkId }, shareLinkDetailsDTO);
         }
 
         // DELETE: api/ShareLinks/5
