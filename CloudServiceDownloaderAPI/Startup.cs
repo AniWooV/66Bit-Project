@@ -1,3 +1,5 @@
+using System;
+using System.Reflection;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -9,6 +11,7 @@ using CloudServiceDownloaderAPI.Contexts;
 using CloudServiceDownloaderAPI.Services.DataBase;
 using Microsoft.EntityFrameworkCore;
 using System.Text.Json.Serialization;
+using System.IO;
 
 namespace CloudServiceDownloaderAPI
 {
@@ -35,9 +38,18 @@ namespace CloudServiceDownloaderAPI
 
             services.AddDatabaseDeveloperPageExceptionFilter();
 
-            services.AddSwaggerGen(c =>
+            services.AddSwaggerGen(options =>
             {
-                c.SwaggerDoc("v1", new OpenApiInfo { Title = "CloudServiceDownloaderAPI", Version = "v1" });
+                options.SwaggerDoc("v1", new OpenApiInfo
+                {
+                    Version = "v1",
+                    Title = "Cloud Storage Download API",
+                    Description = "Web API, разработанное при помощи ASP.NET Core для удобного скачивания и хранения файлов из облачных хранилищ"
+                });
+
+                var xmlFileName = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+
+                options.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, xmlFileName));
             });
         }
 
@@ -50,8 +62,8 @@ namespace CloudServiceDownloaderAPI
 
                 app.UseSwagger();
                 app.UseSwaggerUI(c => {
-                    c.SwaggerEndpoint("/swagger/v1/swagger.json", "CloudServiceDownloadAPI v1");
-                    c.RoutePrefix = "";
+                    c.SwaggerEndpoint("/swagger/v1/swagger.json", "CloudStorageDownloadAPI v1");
+                    c.RoutePrefix = string.Empty;
                 });
             }
 

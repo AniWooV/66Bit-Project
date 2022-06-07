@@ -22,6 +22,10 @@ namespace CloudServiceDownloaderAPI.Controllers
             _context = context;
         }
 
+
+        /// <summary>
+        /// Возвращает список всех ссылок вместе с файлами, которые были скачены по каждой ссылке
+        /// </summary>
         // GET: api/ShareLinks
         [HttpGet]
         public async Task<ActionResult<IEnumerable<ShareLinkDetailsDTO>>> GetShareLinks()
@@ -52,7 +56,6 @@ namespace CloudServiceDownloaderAPI.Controllers
                     {
                         FileId = file.FileId,
                         FileName = file.FileName,
-                        FileType = file.FileType,
                         DownloadTime = file.DownloadTime,
                         ShareLinkId = file.ShareLinkId
                     };
@@ -68,6 +71,10 @@ namespace CloudServiceDownloaderAPI.Controllers
             return shareLinksToReturn;
         }
 
+        /// <summary>
+        /// Возвращает ссылку и файлы, которые были скачены по этой ссылке, по ее индентификатору
+        /// </summary>
+        /// <param name="id">Индентификатор ссылки</param>
         // GET: api/ShareLinks/5
         [HttpGet("{id}")]
         public async Task<ActionResult<ShareLinkDetailsDTO>> GetShareLink(long id)
@@ -99,7 +106,6 @@ namespace CloudServiceDownloaderAPI.Controllers
                 {
                     FileId = file.FileId,
                     FileName = file.FileName,
-                    FileType = file.FileType,
                     DownloadTime = file.DownloadTime,
                     ShareLinkId = file.ShareLinkId
                 };
@@ -112,21 +118,24 @@ namespace CloudServiceDownloaderAPI.Controllers
             return shareLinkDetailsDTO;
         }
 
+        /// <summary>
+        /// Добавление новый ссылки
+        /// </summary>
+        /// <param name="link">Индентификатор ссылки</param>
         // POST: api/ShareLinks
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<ShareLinkDetailsDTO>> PostShareLink(ShareLinkDTO shareLinkDTO)
+        public async Task<ActionResult<ShareLinkDetailsDTO>> PostShareLink(ShareLinkDTO link)
         {
-            var cloudService = DownloadHelper.GetCloudService(shareLinkDTO.Link);
+            var cloudService = DownloadHelper.GetCloudService(link.Link);
 
-            if (cloudService == CloudService.NoService || !DownloadHelper.IsLinkLegit(shareLinkDTO.Link))
+            if (cloudService == CloudService.NoService || !DownloadHelper.IsLinkLegit(link.Link))
             {
                 return BadRequest("Link doesn't lead to any cloud service");
             }
 
             var shareLink = new ShareLink
             {
-                Link = shareLinkDTO.Link,
+                Link = link.Link,
                 CloudService = cloudService,
                 IsDownloaded = false
             };
@@ -150,6 +159,10 @@ namespace CloudServiceDownloaderAPI.Controllers
             return CreatedAtAction(nameof(GetShareLink), new { id = shareLink.ShareLinkId }, shareLinkDetailsDTO);
         }
 
+        /// <summary>
+        /// Удаляет ссылку по ее индетификатору
+        /// </summary>
+        /// <param name="id">Индентификатор ссылки</param>
         // DELETE: api/ShareLinks/5
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteShareLink(long id)

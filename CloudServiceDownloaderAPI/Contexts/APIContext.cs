@@ -11,14 +11,6 @@ namespace CloudServiceDownloaderAPI.Contexts
 
         }
 
-        protected override void OnModelCreating(ModelBuilder modelBuilder)
-        {
-            modelBuilder.Entity<ShareLink>()
-                .HasMany(s => s.Files)
-                .WithOne(f => f.ShareLink)
-                .IsRequired();
-        }
-
         public DbSet<ShareLink> ShareLinks { get; set; }
         public DbSet<File> Files { get; set; }
     }

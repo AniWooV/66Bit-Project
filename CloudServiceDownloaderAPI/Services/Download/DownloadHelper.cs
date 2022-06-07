@@ -4,7 +4,6 @@ using CloudServiceDownloaderAPI.Contexts;
 using CloudServiceDownloaderAPI.Enums;
 using CloudServiceDownloaderAPI.Models;
 using CloudServiceDownloaderAPI.Services.DataBase;
-using Dropbox.Api.Files;
 
 namespace CloudServiceDownloaderAPI.Services.Download
 {
@@ -28,7 +27,7 @@ namespace CloudServiceDownloaderAPI.Services.Download
 
                 return service switch
                 {
-                    "dropbox" => CloudService.DropBox,
+                    "dropbox" => CloudService.Dropbox,
                     "google" => CloudService.Google,
                     "yandex" => CloudService.Yandex,
                     "mail" => CloudService.Mail,
@@ -45,7 +44,7 @@ namespace CloudServiceDownloaderAPI.Services.Download
         {
             return GetCloudService(link) switch
             {
-                CloudService.DropBox => DropBoxDownloader.IsLinkLegit(link),
+                CloudService.Dropbox => DropBoxDownloader.IsLinkLegit(link),
                 CloudService.Yandex => YandexDownloader.IsLinkLegit(link),
                 _ => false
             };
@@ -74,7 +73,7 @@ namespace CloudServiceDownloaderAPI.Services.Download
 
             switch (GetCloudService(shareLink.Link))
             {
-                case CloudService.DropBox:
+                case CloudService.Dropbox:
                     var dropBoxDownloader = new DropBoxDownloader();
 
                     file = await Task.Run(() => 

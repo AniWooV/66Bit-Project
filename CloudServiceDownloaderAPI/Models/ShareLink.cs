@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace CloudServiceDownloaderAPI.Models
 {
-    //[Index(nameof(Link), IsUnique = true)]
+    [Index(nameof(Link), IsUnique = true)]
     public class ShareLink
     {
         public long ShareLinkId { get; set; }
